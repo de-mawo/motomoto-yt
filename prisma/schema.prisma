@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  INSTRUCTOR
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String      @unique
+  emailVerified DateTime?
+  image         String?
+  phone         String?
+  address       String?
+  role          Role        @default(USER)
+  instructor    Instructor?
+  active        Boolean     @default(true)
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]   // A user can have many bookings
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+enum LessonType {
+  DRIVING
+  LEARNERS
+}
+
+enum PaymentMethod {
+  CARD 
+  CASH
+}
+
+enum BookingStatus {
+  PENDING 
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id            String     @id @default(cuid())
+  address   String?
+  date          DateTime
+  times         DateTime[]
+  bookingNumber String
+  cost          Float      @default(0)
+  paymentToken  String?
+  paymentMethod  PaymentMethod
+  paid          Boolean    @default(false)
+  type          LessonType @default(DRIVING)
+  status     BookingStatus @default(PENDING)
+  userId        String     // Link to the User who made the booking
+  instructorId  String     // Link to the Instructor for this booking
+  instructor    Instructor @relation(fields: [instructorId], references: [id])
+  user          User       @relation(fields: [userId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([instructorId])
+}
+
+model Instructor {
+  id           String      @id @default(cuid())
+  userId       String      @unique
+  name      String // Professional Name
+  email     String? //  Business Email
+  phone     String? // Business Phone Number
+  slug         String      @unique 
+  img       String? // For Displaying a professional Image
+  certificate  String?
+  experience   String?
+  transmission String // Vehicle transmission type offered
+  active       Boolean     @default(true) // Either an Instructor is allowed on our platform or not
+  bio          String?
+  rating       Float?      @default(4.9)
+  ratingCount  Int?        @default(10)
+  location     String?
+  services     String? // These are services offered eg Driving or Learners lessons
+  timeslots    TimeSlots[] // These are timeslots added by the Instructor to indicate available times, 
+  dcost        Int? // cost for a drivers license
+  lcost        Int? // cost for a learners license
+  areas        String[] // Areas that are served by the Instructor
+  bookings     Booking[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+//TODO: Check the best way to add driving and learners cost
+model TimeSlots {
+  id           String     @id @default(cuid())
+  type         LessonType @default(DRIVING)
+  date         DateTime
+  times        DateTime[]
+  instructorId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  instructor Instructor @relation(fields: [instructorId], references: [id])
+
+  @@index([instructorId])
+}
