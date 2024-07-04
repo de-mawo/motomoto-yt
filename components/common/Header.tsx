@@ -13,7 +13,7 @@ import AuthForm from "./auth-form";
 const Header = async () => {
   const session = await auth();
   const user = session?.user as User;
-  // const role = user?.role as Role;
+  const role = user?.role as Role;
 
   return (
     <header className="sticky top-0 z-10 rounded-md bg-white shadow-sm dark:bg-black">
@@ -21,7 +21,7 @@ const Header = async () => {
         <div className="mx-8 flex flex-wrap items-center justify-between">
           {/* LEFT SIDE */}
           <div className="flex items-center justify-start">
-            <SideBarDrawer />
+            <SideBarDrawer role={role} />
           </div>
 
           {/* RIGHT SIDE  */}

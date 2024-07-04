@@ -1,4 +1,4 @@
-
+'use client'
 
 import { HiOutlineHome } from "react-icons/hi";
 import { MdImportantDevices, MdOutlineMenuBook } from "react-icons/md";
