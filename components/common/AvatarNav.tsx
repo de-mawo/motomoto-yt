@@ -12,17 +12,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { HiOutlineUser } from "react-icons/hi2";
 import { HiOutlineLockClosed } from "react-icons/hi2";
 import { LuLogOut } from "react-icons/lu";
+import { User } from "next-auth";
+import { RxDashboard } from "react-icons/rx";
 
 
 
 
-export function AvatarNav() {
+export function AvatarNav({user}: {user: User}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className=" h-8 w-8 rounded-full">
           <Avatar className="">
-            <AvatarImage src='/logo.png' alt="demawo" />
+          <AvatarImage src={user?.image as string} alt="demawo" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </Button>
@@ -30,9 +32,9 @@ export function AvatarNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">De mawo</p>
+          <p className="text-sm font-medium leading-none">{user?.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              demawo@motomoto.com
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -42,10 +44,18 @@ export function AvatarNav() {
           <Link href="/user">Profile </Link>
         </DropdownMenuItem>
        
+        {user?.role === "ADMIN" && (
           <DropdownMenuItem className="flex gap-2">
             <HiOutlineLockClosed size={18} />
             <Link href="/dashboard">Admin </Link>
           </DropdownMenuItem>
+        )}
+        {user?.role === "INSTRUCTOR" && (
+          <DropdownMenuItem className="flex gap-2">
+            <RxDashboard size={18} />
+            <Link href="/portal">Portal </Link>
+          </DropdownMenuItem>
+        )}
       
 
         <DropdownMenuItem className="flex gap-2">
