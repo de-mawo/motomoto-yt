@@ -104,7 +104,7 @@ export const userColumns: ColumnDef<User>[] = [
             {role === "INSTRUCTOR" && (
               <DropdownMenuItem>
                 <Link href={`/dashboard/users/${id}?name=${name}`}>
-                  View Instructor&apos;s Profile
+                  Add Instructor&apos;s Profile
                 </Link>
               </DropdownMenuItem>
             )}

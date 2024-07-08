@@ -17,3 +17,21 @@ export const getPathname = (url: string | undefined): string => {
     return "/";
   }
 };
+
+
+export const addArrayItem = (currentItems: any[], newItem: any) => {
+  const updatedItems = [...currentItems, newItem];
+  return updatedItems;
+};
+
+export const removeArrayItem = (items: any[], indexToRemove: number) => {
+  const updatedItems = items.filter((_, index) => index !== indexToRemove);
+  return updatedItems;
+};
+
+export function makeSlug(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/ /g, "-")
+    .replace(/[^\w-]+/g, "");
+}

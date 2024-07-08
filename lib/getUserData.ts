@@ -32,3 +32,34 @@ export async function getUsers(): Promise<User[]> {
       throw new Error("Error fetching  users");
     }
   }
+
+  type GetUserArgs = {
+    id?: string;
+    email?: string;
+  };
+  
+  export async function getUser({ id, email }: GetUserArgs) {
+    const session = await getSession();
+    const currentUserEmail = session?.user?.email;
+    const userRole = session?.user?.role;
+  
+    if (userRole !== "ADMIN" && email !== currentUserEmail) {
+      throw new Error("Unauthorized");
+    }
+  
+    try {
+      const user = await prisma.user.findFirst({
+        where: {
+          OR: [{ id }, { email }],
+        },
+        include: {
+          instructor: true,
+        },
+      });
+  
+      return user;
+    } catch (error) {
+      console.error("Error fetching  user:", error);
+      throw new Error("Error fetching  user");
+    }
+  }
