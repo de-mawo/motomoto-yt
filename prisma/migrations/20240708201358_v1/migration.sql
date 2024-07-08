@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Instructor" ALTER COLUMN "dcost" SET DEFAULT 0,
+ALTER COLUMN "lcost" SET DEFAULT 0;

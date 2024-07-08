@@ -127,8 +127,8 @@ model Instructor {
   location     String?
   services     String? // These are services offered eg Driving or Learners lessons
   timeslots    TimeSlots[] // These are timeslots added by the Instructor to indicate available times, 
-  dcost        Int? // cost for a drivers license
-  lcost        Int? // cost for a learners license
+  dcost        Int? @default(0) // cost for a drivers license
+  lcost        Int? @default(0) // cost for a learners license
   areas        String[] // Areas that are served by the Instructor
   bookings     Booking[]
   createdAt    DateTime    @default(now())

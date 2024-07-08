@@ -63,3 +63,21 @@ export async function getUsers(): Promise<User[]> {
       throw new Error("Error fetching  user");
     }
   }
+
+  export async function getInstructor({ id }: { id: string }) {
+    try {
+      const instructor = await prisma.instructor.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          timeslots: true,
+        },
+      });
+  
+      return instructor;
+    } catch (error) {
+      console.error("Error fetching  user:", error);
+      throw new Error("Error fetching  user");
+    }
+  }
