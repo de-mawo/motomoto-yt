@@ -39,6 +39,7 @@
     "next-themes": "^0.3.0",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-draft-wysiwyg": "^1.15.0",
     "react-hook-form": "^7.52.1",

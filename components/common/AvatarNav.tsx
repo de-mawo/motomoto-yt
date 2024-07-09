@@ -14,6 +14,7 @@ import { HiOutlineLockClosed } from "react-icons/hi2";
 import { LuLogOut } from "react-icons/lu";
 import { User } from "next-auth";
 import { RxDashboard } from "react-icons/rx";
+import LogOutBtn from "./LogOutBtn";
 
 
 
@@ -60,7 +61,7 @@ export function AvatarNav({user}: {user: User}) {
 
         <DropdownMenuItem className="flex gap-2">
           <LuLogOut size={18} />
-          {/* <LogOutButton /> */}
+          <LogOutBtn />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

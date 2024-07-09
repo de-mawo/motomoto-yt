@@ -62,6 +62,18 @@ export const InstructorSchema = z.object({
   location: z.string().optional(),
 });
 
+export const addTimeSlotsSchema = z.object({
+  date: z.date(),
+  type: z.string(),
+  times: z.array(z.date()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one timeslot.",
+  }),
+})
+
+
+
 export type UserAccountValues = z.infer<typeof userAccountSchema>;
 
 export type InstructorValues = z.infer<typeof InstructorSchema>;
+
+export type AddTimeSlotsValues = z.infer<typeof addTimeSlotsSchema>;
