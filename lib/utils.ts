@@ -35,3 +35,38 @@ export function makeSlug(str: string) {
     .replace(/ /g, "-")
     .replace(/[^\w-]+/g, "");
 }
+
+
+export function generateBookingNumber() {
+  const prefix = "MOT";
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  
+  // Generate two random lowercase alphabetical letters
+  const randomLetter1 = letters.charAt(Math.floor(Math.random() * letters.length));
+  const randomLetter2 = letters.charAt(Math.floor(Math.random() * letters.length));
+  
+  // Combine the prefix and random letters to create the booking number
+  const bookingNumber = `${prefix}${randomLetter1}${randomLetter2}`;
+  
+  return bookingNumber;
+}
+
+
+export function generatePaymentToken() {
+  const prefix = "tok_";
+  const uniqueId = generateUniqueId(); // Function to generate a unique identifier
+  
+  // Combine the prefix and unique identifier to create the payment token
+  const paymentToken = `${prefix}${uniqueId}`;
+  
+  return paymentToken;
+}
+
+// Function to generate a unique identifier (for demonstration purposes)
+function generateUniqueId() {
+  // Example: Generate a random number with current timestamp
+  const timestamp = new Date().getTime();
+  const randomId = Math.random().toString(36).substring(2, 10); // Random alphanumeric string
+  
+  return `${timestamp}_${randomId}`;
+}

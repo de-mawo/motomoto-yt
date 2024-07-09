@@ -1,5 +1,8 @@
 import { z } from "zod";
-import parsePhoneNumberFromString from "libphonenumber-js";
+import parsePhoneNumberFromString, { E164Number } from "libphonenumber-js";
+
+
+
 
 const zPhone = z.string().transform((arg, ctx) => {
   const phone = parsePhoneNumberFromString(arg, {
@@ -13,7 +16,7 @@ const zPhone = z.string().transform((arg, ctx) => {
 
   // when it's good
   if (phone && phone.isValid()) {
-    return phone.number;
+    return phone.number as E164Number; // Cast to E164Number
   }
 
   // when it's not
@@ -25,17 +28,12 @@ const zPhone = z.string().transform((arg, ctx) => {
 });
 
 const requiredString = z.string().min(3, "Required");
+
 const numericString = z
   .string()
   .regex(/^\d+$/, "Must be a number")
   .max(9, "Number must be less than 9 digits")
   .optional();
-
-export const userAccountSchema = z.object({
-  name: z.string().optional(),
-  phone: zPhone,
-  address: z.string().optional(),
-});
 
 const ImageSchema = z
   .custom<File | undefined>()
@@ -46,6 +44,48 @@ const ImageSchema = z
   .refine((file) => {
     return !file || file.size < 1024 * 1024 * 2;
   }, "File must be less than 2MB");
+
+const CreditCardNumber = z.string().refine(
+  (number) => {
+    // Remove non-digit characters from the input
+    const cleanedNumber = number.replace(/\D/g, "");
+
+    // Check if the number passes the Luhn algorithm
+    if (!/^[\d ]+$/.test(cleanedNumber)) return false;
+
+    let sum = 0;
+    let shouldDouble = false;
+
+    // Iterate through each digit from right to left
+    for (let i = cleanedNumber.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleanedNumber.charAt(i));
+
+      // Double every second digit
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+
+      // Accumulate the sum of the digits
+      sum += digit;
+
+      // Toggle the flag to double the next digit
+      shouldDouble = !shouldDouble;
+    }
+
+    // Check if the sum is divisible by 10
+    return sum % 10 === 0;
+  },
+  {
+    message: "Invalid credit card number",
+  },
+);
+
+export const userAccountSchema = z.object({
+  name: z.string().optional(),
+  phone: zPhone,
+  address: z.string().optional(),
+});
 
 export const InstructorSchema = z.object({
   name: requiredString.max(50),
@@ -68,12 +108,20 @@ export const addTimeSlotsSchema = z.object({
   times: z.array(z.date()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one timeslot.",
   }),
-})
+});
 
-
+export const CardDetailsSchema = z.object({
+  name: requiredString.max(50),
+  cardNumber: CreditCardNumber,
+  cvc: z.string().regex(/^\d+$/, "Must be a number").min(3).max(3),
+  month: requiredString,
+  year: requiredString,
+});
 
 export type UserAccountValues = z.infer<typeof userAccountSchema>;
 
 export type InstructorValues = z.infer<typeof InstructorSchema>;
 
 export type AddTimeSlotsValues = z.infer<typeof addTimeSlotsSchema>;
+
+export type CardDetailsValues = z.infer<typeof CardDetailsSchema>;

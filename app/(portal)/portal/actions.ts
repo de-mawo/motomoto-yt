@@ -56,7 +56,7 @@ export async function addSlots({ instructorId, formData }: AddSlotsArgs) {
     }
 
     await prisma.timeSlots.create({
-      data: { type: lessonType, instructorId, times, date },
+      data: { type: lessonType, instructorId, times, date: new Date(date) },
     });
     revalidatePath("/portal");
     return { message: `Time Slot added` };
