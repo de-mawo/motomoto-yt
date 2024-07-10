@@ -1,13 +1,26 @@
 "use client";
 
-import { IoMdNotificationsOutline } from "react-icons/io";
+import { useState, useRef } from "react";
+import {
+  NotificationIconButton,
+  NotificationFeedPopover,
+} from "@knocklabs/react";
 
 export default function NotifyBtn() {
-  
+  const [isVisible, setIsVisible] = useState(false);
+  const notifButtonRef = useRef(null);
 
   return (
     <div>
-     <IoMdNotificationsOutline size={24} />
+      <NotificationIconButton
+        ref={notifButtonRef}
+        onClick={(e) => setIsVisible(!isVisible)}
+      />
+      <NotificationFeedPopover
+        buttonRef={notifButtonRef}
+        isVisible={isVisible}
+        onClose={() => setIsVisible(false)}
+      />
     </div>
   );
 }

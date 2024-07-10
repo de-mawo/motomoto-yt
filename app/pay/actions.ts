@@ -9,6 +9,10 @@ import { PaymentMethod } from "@prisma/client";
 
 import { redirect } from "next/navigation";
 
+import { Knock } from "@knocklabs/node";
+
+const knock = new Knock(process.env.KNOCK_SECRET_KEY);
+
 //TODO: When paying with a card and calling an API, the paid value should be set to true upon success card payment
 
 type AddBookingArgs = {
@@ -93,6 +97,51 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
   await prisma.booking.createMany({
     data: modifiedBookings,
   });
+
+  // Notifications object
+  const recipients: {
+    id: string;
+    name: string;
+    email: string;
+  }[] = [];
+
+  // Find instructors   where instructor.id is found in instructorIds[]
+  // then find users associtated with each instructor for you to be able to show notification to the user
+  const instructors = await prisma.instructor.findMany({
+    where: {
+      id: { in: Array.from(instructorIds) }, // Convert Set to array for prisma query
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+  // Loop through each instructor and prepare recipient data
+  for (const instructor of instructors) {
+    recipients.push({
+      id: instructor.user.id,
+      name: instructor.user.name as string,
+      email: instructor.user.email as string,
+    });
+  }
+
+  if (recipients.length > 0) {
+    await knock.workflows.trigger("booking-placed", {
+      actor: {
+        id: userId,
+        name: session?.user?.name ?? "Anonymous",
+        email: session?.user?.email,
+        collection: "users",
+      },
+      recipients,
+      data: {},
+    });
+  }
 
   redirect("/user/bookings");
 }

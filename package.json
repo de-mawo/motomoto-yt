@@ -11,6 +11,8 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.1",
     "@hookform/resolvers": "^3.7.0",
+    "@knocklabs/node": "^0.6.13",
+    "@knocklabs/react": "^0.2.23",
     "@prisma/adapter-neon": "^5.16.1",
     "@prisma/client": "^5.16.1",
     "@radix-ui/react-avatar": "^1.1.0",
