@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { BreadCrumbItem } from "@/components/common/bread-crumb-item";
 import { getUser } from "@/lib/getUserData";
 import AddInstructorForm from "./AddInstructorForm";
+import getSession from "@/lib/getSession";
 
 export default async function AddInstructorPage({
   params,
@@ -10,6 +11,13 @@ export default async function AddInstructorPage({
   params: { user: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const session = await getSession();
+  const user = session?.user;
+
+  if (!user || user.role !== "ADMIN") {
+    redirect(user ? "/" : "/api/auth/signin?callbackUrl=/dashboard");
+  }
+
   const id = params.user;
   const currentName = searchParams.name; // User's curent name to be changed to instructor
 
