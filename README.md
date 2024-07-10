@@ -1,6 +1,27 @@
 # Moto Moto
 
-- A Driving lessons booking web-app
+
+- **A Driving lessons booking web-app**
+
+<img src="/opengraph.png" alt="opengraph" >
+
+## Tech-Stack Used
+- Next.js as the React framework
+- Prisma as the ORM for migrations and database access
+- PostgreSQL: database for local testing
+- Next-Auth/Authjs: for authentication
+- TypeScript: the programming language
+- TailwindCSS: Styling
+- Shadcn/ui for UI components
+
+## Set Up
+- Clone the repo `https://github.com/de-mawo/spana-yt.git `
+- Install packages `npm install ` in your terminal
+- Create a *.env file* on the root of your project directory.See the *.env.example * file for all variables required
+- Set up your Postgresql database either locally of cloud-based (Neon, Vercel or Supabase)
+- Run `npx prisma migrate dev ` to sync your schema with your database, 
+- Start the app locally by running `npm run dev` 
+
 
 ## Future Updates & Refactoring
 
